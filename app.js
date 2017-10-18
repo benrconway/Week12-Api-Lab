@@ -1,12 +1,12 @@
 var url = "https://restcountries.eu/rest/v2/all";
 
 var addCountriesToSelect = function(countries) {
-  var listFrame = document.getElementById("load-country")
+  var dropDown = document.getElementById("load-country")
 
   countries.forEach(function(country){
     var option = document.createElement("option")
     option.innerText = country.name ;
-    listFrame.appendChild(option);
+    dropDown.appendChild(option);
   })
 }
 
@@ -39,8 +39,30 @@ var makeRequest = function (countryName) {
 
   request.addEventListener("load", function() {
     var country = JSON.parse(this.responseText);
+    console.log(country);
+    displayCountryDetails(country);
   })
   request.send();
+}
+
+var displayCountryDetails = function(country) {
+  var ul = document.getElementById("country")
+
+  while(ul.firstChild) {
+    ul.removeChild(ul.firstChild)
+  }
+
+  var name = document.createElement("li");
+  var capital = document.createElement("li");
+  var population = document.createElement("li");
+
+  name.innerText = country[0].name;
+  capital.innerText = country[0].capital;
+  population.innerText = country[0].population;
+console.log(name);
+  ul.appendChild(name);
+  ul.appendChild(capital);
+  ul.appendChild(population);
 }
 
 

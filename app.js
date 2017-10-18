@@ -1,21 +1,11 @@
 var prepopulateRegions = function(countries) {
   var regionArray = [];
-  // var url = "https://restcountries.eu/rest/v2/all";
-  // var request = new XMLHttpRequest();
-  //
-  // request.open("GET", url);
-  //
-  // request.addEventListener("load", function() {
-  //   var countries = JSON.parse(this.responseText);
     countries.forEach(function(country) {
       if (!regionArray.includes(country.region)) {
         regionArray.push(country.region);
       }
     })
     addRegionsToSelect(regionArray);
-
-
-  // request.send();
 }
 
 var addRegionsToSelect = function(regions) {
@@ -29,17 +19,21 @@ var addRegionsToSelect = function(regions) {
 }
 
 var addCountriesToSelect = function(countries) {
-  console.log("Add countries is called");
   var dropDown = document.getElementById("load-country")
-  while (dropDown.secondChild){dropDown.removeChild(dropDown.secondChild)}
-  console.dir(dropDown);
+
+  while(dropDown.firstChild){dropDown.removeChild(dropDown.firstChild)}
+
+  var chooseField = document.createElement("option")
+  chooseField.disabled = true;
+  chooseField.selected = true;
+  chooseField.innerText = "Choose a country";
+  dropDown.appendChild(chooseField);
+
   countries.forEach(function(country){
     var option = document.createElement("option")
     option.innerText = country.name ;
     dropDown.appendChild(option);
-    console.log("appended", country.name);
   })
-  console.dir(dropDown);
 }
 
 var loadRegion = document.getElementById("load-region")
@@ -62,11 +56,10 @@ var filterCountrySelect = function(regionName) {
         countriesInRegion.push(country)
       }
     })
+    addCountriesToSelect(countriesInRegion);
   })
   request.send();
-console.log("this is a call", countriesInRegion);
-  addCountriesToSelect(countriesInRegion);
-  console.log(countriesInRegion[0].name);
+
 }
 
 var loadSelect = document.getElementById("load-country")
@@ -89,10 +82,10 @@ var makeRequest = function (countryName) {
 
 var displayCountryDetails = function(country) {
   var ul = document.getElementById("country")
+  while(ul.firstChild) { ul.removeChild(ul.firstChild) }
 
-  while(ul.firstChild) {
-    ul.removeChild(ul.firstChild)
-  }
+  var div = document.getElementById("bordering")
+  while(div.firstChild){div.removeChild(div.firstChild)}
 
   var name = document.createElement("li");
   var capital = document.createElement("li");
@@ -124,37 +117,21 @@ var reloadLastCountry = function () {
 
 
 var borderingCountries = function(code){
-
   code.forEach(function(bordering){
     var url = "https://restcountries.eu/rest/v2/alpha/"+ bordering;
     var request = new XMLHttpRequest();
     request.open("GET", url);
-
-    var div = document.getElementById("bordering")
-    while(div.firstChild){div.removeChild(div.firstChild)}
 
     request.addEventListener("load", function() {
       var country = JSON.parse(this.responseText);
 
       displayBordering(country);
     })
-
     request.send()
   })
-  // var url = "https://restcountries.eu/rest/v2/alpha/"+ code;
-  // var request = new XMLHttpRequest();
-  //
-  // request.open("GET", url);
-  //
-  // request.addEventListener("load", function() {
-  //   var country = JSON.parse(this.responseText);
-  //   displayBordering(country);
-// })
-
 }
 
 var displayBordering = function(country) {
-
   var div = document.getElementById("bordering")
   var ol = document.createElement("ol")
   var name = document.createElement("li");
@@ -191,19 +168,3 @@ var prePopulateCountryList = function() {
 }
 
 window.addEventListener("load", this.prePopulateCountryList);
-
-
-
-
-
-
-
-//
-// var buttonClear = document.getElementById("clear")
-// buttonClear.addEventListener("click", function() {
-//   var ul = document.getElementById("countries")
-//   ul.innerHTML = "";
-//   //while (ul.firstChild) {
-//   // ul.removeChild(ul.firstChild)
-//   // }
-// })

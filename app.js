@@ -65,16 +65,19 @@ var reloadLastCountry = function () {
 
 
 var borderingCountries = function(code){
-  // console.dir(code);
+
   code.forEach(function(bordering){
     var url = "https://restcountries.eu/rest/v2/alpha/"+ bordering;
     var request = new XMLHttpRequest();
-    console.log("We're sending a request");
     request.open("GET", url);
+
+    var div = document.getElementById("bordering")
+    while(div.firstChild){div.removeChild(div.firstChild)}
 
     request.addEventListener("load", function() {
       var country = JSON.parse(this.responseText);
-      console.log("This is a country!",country);
+
+      displayBordering(country);
     })
 
     request.send()
@@ -92,20 +95,22 @@ var borderingCountries = function(code){
 }
 
 var displayBordering = function(country) {
-  var ul = document.getElementById("country")
 
+  var div = document.getElementById("bordering")
+  var ol = document.createElement("ol")
   var name = document.createElement("li");
   var capital = document.createElement("li");
   var population = document.createElement("li");
 
-  name.innerText = country[0].name;
-  ul.appendChild(name);
+  name.innerText = country.name;
+  ol.appendChild(name);
 
-  capital.innerText = country[0].capital;
-  ul.appendChild(capital);
+  capital.innerText = country.capital;
+  ol.appendChild(capital);
 
-  population.innerText = country[0].population;
-  ul.appendChild(population);
+  population.innerText = country.population;
+  ol.appendChild(population);
+  div.appendChild(ol);
 }
 
 var prePopulateCountryList = function() {

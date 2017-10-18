@@ -1,18 +1,77 @@
-var addCountriesToSelect = function(countries) {
-  var dropDown = document.getElementById("load-country")
+var prepopulateRegions = function(countries) {
+  var regionArray = [];
+  // var url = "https://restcountries.eu/rest/v2/all";
+  // var request = new XMLHttpRequest();
+  //
+  // request.open("GET", url);
+  //
+  // request.addEventListener("load", function() {
+  //   var countries = JSON.parse(this.responseText);
+    countries.forEach(function(country) {
+      if (!regionArray.includes(country.region)) {
+        regionArray.push(country.region);
+      }
+    })
+    addRegionsToSelect(regionArray);
 
+
+  // request.send();
+}
+
+var addRegionsToSelect = function(regions) {
+  var dropList = document.getElementById("load-region")
+
+  regions.forEach(function(region){
+    var option = document.createElement("option")
+    option.innerText = region;
+    dropList.appendChild(option);
+  })
+}
+
+var addCountriesToSelect = function(countries) {
+  console.log("Add countries is called");
+  var dropDown = document.getElementById("load-country")
+  while (dropDown.secondChild){dropDown.removeChild(dropDown.secondChild)}
+  console.dir(dropDown);
   countries.forEach(function(country){
     var option = document.createElement("option")
     option.innerText = country.name ;
     dropDown.appendChild(option);
+    console.log("appended", country.name);
   })
+  console.dir(dropDown);
 }
 
+var loadRegion = document.getElementById("load-region")
+loadRegion.addEventListener("change", function() {
+  var regionName = loadRegion.value;
+  filterCountrySelect(regionName);
+})
+
+var filterCountrySelect = function(regionName) {
+  var countriesInRegion = [];
+  var url = "https://restcountries.eu/rest/v2/all";
+  var request = new XMLHttpRequest();
+
+  request.open("GET", url);
+
+  request.addEventListener("load", function() {
+    var countries = JSON.parse(this.responseText);
+    countries.forEach(function(country) {
+      if(country.region === regionName) {
+        countriesInRegion.push(country)
+      }
+    })
+  })
+  request.send();
+console.log("this is a call", countriesInRegion);
+  addCountriesToSelect(countriesInRegion);
+  console.log(countriesInRegion[0].name);
+}
 
 var loadSelect = document.getElementById("load-country")
 loadSelect.addEventListener("change", function() {
 var countryName = loadSelect.value;
-
 makeRequest(countryName);
 });
 
@@ -122,6 +181,7 @@ var prePopulateCountryList = function() {
   request.addEventListener("load", function() {
     var countries = JSON.parse(this.responseText);
     addCountriesToSelect(countries);
+    prepopulateRegions(countries);
 
   });
 

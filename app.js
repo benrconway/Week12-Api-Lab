@@ -1,5 +1,3 @@
-var url = "https://restcountries.eu/rest/v2/all";
-
 var addCountriesToSelect = function(countries) {
   var dropDown = document.getElementById("load-country")
 
@@ -10,20 +8,6 @@ var addCountriesToSelect = function(countries) {
   })
 }
 
-var prePopulateCountryList = function(url) {
-  var request = new XMLHttpRequest();
-
-  request.open("GET", url);
-
-  request.addEventListener("load", function() {
-    var countries = JSON.parse(this.responseText);
-    addCountriesToSelect(countries);
-
-  });
-
-  request.send();
-
-}
 
 var loadSelect = document.getElementById("load-country")
 loadSelect.addEventListener("change", function() {
@@ -39,7 +23,6 @@ var makeRequest = function (countryName) {
 
   request.addEventListener("load", function() {
     var country = JSON.parse(this.responseText);
-    console.log(country);
     displayCountryDetails(country);
   })
   request.send();
@@ -57,16 +40,46 @@ var displayCountryDetails = function(country) {
   var population = document.createElement("li");
 
   name.innerText = country[0].name;
-  capital.innerText = country[0].capital;
-  population.innerText = country[0].population;
-console.log(name);
   ul.appendChild(name);
+
+  capital.innerText = country[0].capital;
   ul.appendChild(capital);
+
+  population.innerText = country[0].population;
   ul.appendChild(population);
+  save(country)
 }
 
+var save = function(itemToSave){
+  var jsonString = JSON.stringify(itemToSave);
+  localStorage.setItem("country", jsonString);
+}
 
-window.addEventListener("load", prePopulateCountryList(url));
+var reloadLastCountry = function () {
+ var jsonString = JSON.parse(localStorage.getItem("country"));
+ displayCountryDetails(jsonString)
+
+}
+
+var prePopulateCountryList = function() {
+  var url = "https://restcountries.eu/rest/v2/all";
+  var request = new XMLHttpRequest();
+
+  reloadLastCountry();
+
+  request.open("GET", url);
+
+  request.addEventListener("load", function() {
+    var countries = JSON.parse(this.responseText);
+    addCountriesToSelect(countries);
+
+  });
+
+  request.send();
+
+}
+
+window.addEventListener("load", prePopulateCountryList);
 
 
 
